@@ -1,12 +1,50 @@
-# React + Vite
+# Aplikasi Web Manajemen Film Pribadi dengan Fitur Review dan Status Tonton
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Deskripsi Aplikasi Web
+Aplikasi web yang membantu pengguna dalam mengelola daftar film pribadi. Pengguna dapat menambahkan film dari sumber eksternal (OMDb API), memberi status seperti "Ingin Ditonton", "Sedang Ditonton", atau "Selesai Ditonton", serta menulis ulasan (review) untuk setiap film. Aplikasi ini dibangun dengan arsitektur **Frontend-Backend terpisah**, menggunakan React JS di sisi frontend dan Pyramid (Python) sebagai backend dengan PostgreSQL sebagai basis data.
 
-Currently, two official plugins are available:
+## Dependensi Paket (Library) yang Dibutuhkan
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Backend (Pyramid & Python)
+- `pyramid`
+- `pyramid_jinja2`
+- `sqlalchemy`
+- `psycopg2` (untuk koneksi PostgreSQL)
+- `zope.sqlalchemy`
+- `pydantic` (untuk validasi data)
+- `alembic` (untuk migrasi database)
 
-## Expanding the ESLint configuration
+### Frontend (React)
+- `react`
+- `react-router-dom`
+- `axios`
+- `tailwindcss`
+- `vite` (sebagai bundler)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Fitur pada Aplikasi
+
+1. **CRUD Film Pribadi**  
+   - Tambah, edit, dan hapus film secara manual atau dari OMDb API.
+
+2. **Integrasi dengan OMDb API**  
+   - Cari film berdasarkan judul melalui API eksternal.
+
+3. **Manajemen Status Film**  
+   - Tambahkan dan kelola status film: Ingin Ditonton, Sedang Ditonton, atau Selesai Ditonton.
+
+4. **Review Film**  
+   - Tulis dan kelola ulasan film pribadi.
+
+5. **Filter Film Berdasarkan Status**  
+   - Filter daftar film berdasarkan status yang dipilih.
+
+6. **UI/UX Modern**  
+   - Tampilan responsif menggunakan Tailwind CSS.
+
+## Referensi
+
+- [Pyramid Documentation](https://docs.pylonsproject.org/projects/pyramid/en/latest/)
+- [React Documentation](https://reactjs.org/)
+- [OMDb API](https://www.omdbapi.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [PostgreSQL](https://www.postgresql.org/)
