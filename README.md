@@ -1,16 +1,44 @@
-<<<<<<< HEAD
-# React + Vite
+# Aplikasi Web Manajemen Film Pribadi
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Deskripsi
+Aplikasi web ini memungkinkan pengguna untuk mengelola daftar film pribadi mereka. Pengguna dapat menyimpan film yang telah ditonton atau ingin ditonton, memberikan ulasan, menilai film, dan mencatat tanggal menonton. Aplikasi ini juga menyediakan rekomendasi film terbaru dari OMDb API.
 
-Currently, two official plugins are available:
+## Dependensi
+### Backend (Pyramid + PostgreSQL)
+- Python 3.x
+- Pyramid
+- SQLAlchemy
+- Alembic
+- psycopg2
+- Pydantic
+- Requests
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Frontend (React + Vite)
+- React
+- Vite
+- Axios
+- Tailwind CSS
+- React Router DOM
+- ContextAPI
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# Aplikasi Web Manajemen Film Pribadi dengan Fitur Review dan Status Tonton
->>>>>>> b8229818dabfe3cb81d698ded2bda38679d7af47
+## Fitur Aplikasi
+### CRUD Entitas:
+- **User**: registrasi, login, update profil, hapus akun
+- **Film**: tambah, lihat detail, update status tonton, hapus
+- **Review**: tambah dan lihat review untuk setiap film
+- **Status**: tambah, lihat, update status
+  
+### Fitur Lain:
+- Autentikasi pengguna (login & register)
+- Rekomendasi film dari OMDb API di halaman utama
+- Pencarian film interaktif dari OMDb API
+- Daftar film pribadi berdasarkan status (sudah ditonton / ingin ditonton)
+- UI responsif dan ramah pengguna
+  
+## Referensi
+- [Pyramid Web Framework](https://trypyramid.com/)
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [OMDb API](https://www.omdbapi.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Axios](https://axios-http.com/)
