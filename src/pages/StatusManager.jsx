@@ -8,10 +8,17 @@ const StatusManager = () => {
   const [statuses, setStatuses] = useState([]); // Menyimpan daftar status
 
   useEffect(() => {
-    // Mengambil data film dan status dari API
-    getFilms().then(res => setFilms(res.data));
-    getStatuses().then(res => setStatuses(res.data));
-  }, []);
+  getFilms().then(res => {
+    console.log("Films:", res.data);
+    setFilms(res.data.films || []);
+  });
+  
+  getStatuses().then(res => {
+    console.log("Statuses response:", res.data);
+    setStatuses(res.data.statuses || []);
+  });
+}, []);
+
 
   // Mengubah status film
   const handleStatusChange = async (id, newStatusId) => {

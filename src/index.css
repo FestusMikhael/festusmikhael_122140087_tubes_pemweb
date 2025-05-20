@@ -5,9 +5,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #121212; /* Dark background for modern feel */
+  color-scheme: dark;
+  color: #fefefe;
+  background-color: #0d0d0d; /* Hitam pekat */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,13 +17,13 @@
 
 a {
   font-weight: 500;
-  color: #ffffff; /* White color for links */
+  color: #facc15; /* Kuning aksen */
   text-decoration: none;
-  transition: color 0.3s ease; /* Smooth hover transition */
+  transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #f3f3f3; /* Lighter white color on hover */
+  color: #fde047; /* Kuning lebih terang saat hover */
 }
 
 body {
@@ -33,61 +33,28 @@ body {
   justify-content: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #121212; /* Dark mode background */
-  color: #ffffff; /* Light text color */
+  background-color: #0d0d0d;
+  color: #fefefe;
 }
 
 h1 {
-  font-size: 3rem; /* Large header for emphasis */
-  font-weight: 700; /* Bold for modern look */
-  color: #f3f3f3; /* Lighter white for contrast */
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fde047; /* Header dengan kuning terang */
   line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid #ffffff; /* White border */
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a; /* Dark button background */
-  color: #ffffff; /* White text */
-  cursor: pointer;
-  transition: border-color 0.25s, background-color 0.3s; /* Smooth transition */
-}
-
-button:hover {
-  border-color: #f3f3f3; /* Lighter border on hover */
-  background-color: #333333; /* Slightly lighter background */
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #121212; /* Dark text color */
-    background-color: #ffffff; /* White background for light mode */
+    color: #0d0d0d;
+    background-color: #ffffff;
   }
 
   a {
-    color: #121212; /* Dark color for links */
+    color: #eab308; /* Versi kuning gelap di mode terang */
   }
 
   a:hover {
-    color: #333333; /* Darker hover color */
-  }
-
-  button {
-    background-color: #ffffff; /* White button background for light mode */
-    border: 1px solid #121212; /* Dark border for contrast */
-    color: #121212; /* Dark text for buttons */
-  }
-
-  button:hover {
-    background-color: #f3f3f3; /* Light button background on hover */
+    color: #ca8a04;
   }
 }

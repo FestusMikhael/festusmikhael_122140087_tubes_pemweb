@@ -8,7 +8,8 @@ import zope.sqlalchemy
 from .mymodel import MyModel
 from .review import Review 
 from .film import Film  
-from .status import Status  
+from .status import Status 
+from .user import User
 
 # run configure_mappers after defining all of the models to ensure
 # all relationships can be setup
