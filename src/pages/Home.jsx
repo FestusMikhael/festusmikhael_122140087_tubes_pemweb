@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchFilmOMDb } from '../api/omdbApi';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { getFilmDetailOMDb } from '../api/omdbApi';
 
 // Komponen untuk placeholder jika poster film tidak ditemukan
 const CoverNotFoundSmall = () => (
@@ -54,14 +57,47 @@ const Home = () => {
   }, [search]);
 
   // Fungsi ketika user klik tombol tambah ke koleksi
-  const handleAddToCollection = (film) => {
-    // Ide alur:
-    // 1. Simpan film ke database koleksi user (misal firestore atau backend)
-    // 2. Beri feedback, misal notifikasi 'Film berhasil ditambahkan ke koleksi'
-    // 3. Bisa juga disable tombol / ganti ikon setelah ditambahkan
-    alert(`Tambah "${film.Title}" ke koleksi!`);
-    // TODO: implementasi simpan koleksi disini
-  };
+const handleAddToCollection = async (film) => {
+  const token = localStorage.getItem('token');
+
+  // ambil detail lengkap dulu
+  const filmDetail = await getFilmDetailOMDb(film.imdbID);
+  if (!filmDetail) {
+    alert('Gagal mengambil detail film');
+    return;
+  }
+  console.log("Data yang dikirim:", { 
+    judul: film.title,
+    tahun: film.release_date?.split("-")[0] || "2023",
+    poster: film.poster_path 
+  });
+  try {
+    await axios.post('http://localhost:6543/api/films', {
+      judul: filmDetail.Title,
+      tahun: parseInt(filmDetail.Year) || null,
+      sutradara: filmDetail.Director || '',
+      genre: filmDetail.Genre || '',
+      poster: filmDetail.Poster || '',
+      sinopsis: filmDetail.Plot || '',
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    toast.success(`"${film.Title}" berhasil ditambahkan ke koleksi!`);
+  } catch (error) {
+    console.error(error);
+
+    // Jika respons error dari server
+    if (error.response && error.response.data && error.response.data.message) {
+      toast.error(`Gagal menambahkan: ${error.response.data.message}`);
+    } else {
+      toast.error('Gagal menambahkan film.');
+    }
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white flex flex-col">

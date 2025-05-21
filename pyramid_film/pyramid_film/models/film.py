@@ -10,12 +10,16 @@ class Film(Base):
     sutradara = Column(String)
     genre = Column(String)
     status_id = Column(Integer, ForeignKey('statuses.id'))
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # ✅ Tambahkan ini
+    poster = Column(String, nullable=True)
+    sinopsis = Column(String, nullable=True)
+
 
     # Relationship
     status = relationship("Status", back_populates="films")
     reviews = relationship("Review", back_populates="film")
+    user = relationship("User", back_populates="films")  # ✅ Tambahkan ini untuk relasi 2 arah
 
-    # Method to_dict untuk API Response
     def to_dict(self):
         return {
             'id': self.id,
@@ -24,6 +28,9 @@ class Film(Base):
             'sutradara': self.sutradara,
             'genre': self.genre,
             'status_id': self.status_id,
-            'status': self.status.to_dict() if self.status else None,  # Menambahkan status film
-            'reviews': [review.to_dict() for review in self.reviews]  # Menambahkan review film
+            'status': self.status.to_dict() if self.status else None,
+            'reviews': [review.to_dict() for review in self.reviews],
+            'poster': self.poster,
+            'sinopsis': self.sinopsis,
+            'user_id': self.user_id,
         }

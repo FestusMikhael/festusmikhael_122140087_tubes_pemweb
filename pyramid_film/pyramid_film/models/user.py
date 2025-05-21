@@ -1,7 +1,8 @@
-from passlib.hash import bcrypt
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from .meta import Base
 from datetime import datetime
-from .meta import Base 
+from passlib.hash import bcrypt
 
 class User(Base):
     __tablename__ = 'users'
@@ -10,6 +11,8 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    films = relationship("Film", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, password):
         self.password_hash = bcrypt.hash(password)

@@ -8,11 +8,10 @@ def includeme(config):
     config.add_route('home', '/')
     config.add_static_view('static', 'static', cache_max_age=3600)
 
-    config.add_route('get_films', '/api/films')
-    config.add_route('get_film', '/api/films/{id}')
-    config.add_route('add_film', '/api/films')
+    config.add_route('films', '/api/films')
+    config.add_route('get_film', '/api/films/{id}', request_method='GET')
     config.add_route('update_film', '/api/films/{id}')
-    config.add_route('delete_film', '/api/films/{id}')
+    config.add_route('delete_film', '/api/films/{id}', request_method='DELETE')
 
     config.add_route('get_statuses', '/api/statuses')
     config.add_route('add_status', '/api/statuses')

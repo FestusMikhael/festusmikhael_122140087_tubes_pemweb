@@ -17,16 +17,17 @@ export default function Login() {
   };
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    setMessage('');
+  e.preventDefault();
+  setMessage('');
 
-    try {
-      await login(form);
-      navigate('/home');
-    } catch (error) {
-      setMessage(error.error || 'Login gagal');
-    }
-  };
+  try {
+    const response = await login(form); // login mengembalikan { token, message }
+    localStorage.setItem('token', response.token);  // Simpan token
+    navigate('/home');
+  } catch (error) {
+    setMessage(error.error || 'Login gagal'); // Tampilkan pesan error
+  }
+};
 
   return (
     <main className="w-full max-w-xl min-w-[350px] min-h-[450px] mx-auto p-8 bg-gray-900 rounded-2xl shadow-2xl mt-16">

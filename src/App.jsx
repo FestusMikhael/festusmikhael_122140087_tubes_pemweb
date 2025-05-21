@@ -1,12 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';  // import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
-import EditFilm from './pages/EditFilm';
-import FilmDetail from './pages/FilmDetail';
-import StatusManager from './pages/StatusManager';
-import SearchFilm from './pages/SearchFilm';
-import Register from './pages/Register';  // Import Register
-import Login from './pages/Login';        // Import Login
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Collection from './pages/Collection';
 
 const App = () => (
   <Router>
@@ -15,11 +14,9 @@ const App = () => (
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/edit/:id" element={<EditFilm />} />
-        <Route path="/film/:id" element={<FilmDetail />} />
-        <Route path="/status" element={<StatusManager />} />
-        <Route path="/search" element={<SearchFilm />} />
+        <Route path="/koleksi" element={<Collection />} />
       </Routes>
+      <ToastContainer />
     </div>
   </Router>
 );
