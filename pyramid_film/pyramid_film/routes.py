@@ -9,18 +9,15 @@ def includeme(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
 
     config.add_route('films', '/api/films')
-    config.add_route('get_film', '/api/films/{id}', request_method='GET')
-    config.add_route('update_film', '/api/films/{id}')
-    config.add_route('delete_film', '/api/films/{id}', request_method='DELETE')
+    config.add_route('film_detail', '/api/films/{id}')
 
     config.add_route('get_statuses', '/api/statuses')
     config.add_route('add_status', '/api/statuses')
     config.add_route('delete_status', '/api/statuses/{id}')
 
-    config.add_route('get_reviews', '/api/reviews')
-    config.add_route('add_review', '/api/reviews')
-    config.add_route('delete_review', '/api/reviews/{id}')
-
+    config.add_route('user_film_review', '/api/films/{film_id}/my-review')
+    config.add_route('review_action', '/api/reviews/{review_id}')
+    
     config.add_route('register', '/api/register')
     config.add_route('login', '/api/login')
     config.add_route('profile', '/profile')

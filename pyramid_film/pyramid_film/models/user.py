@@ -13,7 +13,8 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     films = relationship("Film", back_populates="user", cascade="all, delete-orphan")
-
+    reviews = relationship("Review", back_populates="user", cascade="all, delete-orphan")
+    
     def set_password(self, password):
         self.password_hash = bcrypt.hash(password)
 

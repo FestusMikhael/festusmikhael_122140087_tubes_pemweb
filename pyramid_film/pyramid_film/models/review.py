@@ -8,15 +8,17 @@ class Review(Base):
     komentar = Column(String)
     rating = Column(Integer)
     film_id = Column(Integer, ForeignKey('films.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))  # Add this line
 
-    # Relationship
+    # Relationships
     film = relationship("Film", back_populates="reviews")
-
-    # Method to_dict untuk API Response
+    user = relationship("User", back_populates="reviews")
+    
     def to_dict(self):
         return {
             'id': self.id,
             'komentar': self.komentar,
             'rating': self.rating,
-            'film_id': self.film_id
+            'film_id': self.film_id,
+            'user_id': self.user_id  # Add this line
         }

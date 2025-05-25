@@ -21,13 +21,21 @@ export default function Login() {
   setMessage('');
 
   try {
-    const response = await login(form); // login mengembalikan { token, message }
-    localStorage.setItem('token', response.token);  // Simpan token
-    navigate('/home');
+    const response = await login(form); // Misal response: { token, message, error }
+    
+    if (response.error) {
+      // Kalau ada error dari server, tampilkan pesan dan jangan redirect
+      setMessage(response.error);
+    } else {
+      // Login sukses, simpan token dan redirect
+      localStorage.setItem('token', response.token);
+      navigate('/home');
+    }
   } catch (error) {
-    setMessage(error.error || 'Login gagal'); // Tampilkan pesan error
+    setMessage(error.message || 'Login gagal');
   }
 };
+
 
   return (
     <main className="w-full max-w-xl min-w-[350px] min-h-[450px] mx-auto p-8 bg-gray-900 rounded-2xl shadow-2xl mt-16">

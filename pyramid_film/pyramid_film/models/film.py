@@ -10,7 +10,7 @@ class Film(Base):
     sutradara = Column(String)
     genre = Column(String)
     status_id = Column(Integer, ForeignKey('statuses.id'))
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # ✅ Tambahkan ini
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     poster = Column(String, nullable=True)
     sinopsis = Column(String, nullable=True)
 
@@ -18,7 +18,7 @@ class Film(Base):
     # Relationship
     status = relationship("Status", back_populates="films")
     reviews = relationship("Review", back_populates="film")
-    user = relationship("User", back_populates="films")  # ✅ Tambahkan ini untuk relasi 2 arah
+    user = relationship("User", back_populates="films")
 
     def to_dict(self):
         return {
