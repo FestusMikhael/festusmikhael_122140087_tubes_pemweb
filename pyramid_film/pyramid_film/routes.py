@@ -11,9 +11,8 @@ def includeme(config):
     config.add_route('films', '/api/films')
     config.add_route('film_detail', '/api/films/{id}')
 
-    config.add_route('get_statuses', '/api/statuses')
-    config.add_route('add_status', '/api/statuses')
-    config.add_route('delete_status', '/api/statuses/{id}')
+    config.add_route('statuses', '/api/statuses')
+    config.add_route('status_detail', '/api/statuses/{id}')
 
     config.add_route('user_film_review', '/api/films/{film_id}/my-review')
     config.add_route('review_action', '/api/reviews/{review_id}')
@@ -22,5 +21,4 @@ def includeme(config):
     config.add_route('login', '/api/login')
     config.add_route('profile', '/profile')
 
-    # Tidak perlu add_view dan tidak perlu import views
     config.scan()

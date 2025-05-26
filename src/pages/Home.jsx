@@ -59,20 +59,16 @@ const Home = () => {
   // Fungsi ketika user klik tombol tambah ke koleksi
 const handleAddToCollection = async (film) => {
   const token = localStorage.getItem('token');
-
-  // ambil detail lengkap dulu
+  
   const filmDetail = await getFilmDetailOMDb(film.imdbID);
   if (!filmDetail) {
-    alert('Gagal mengambil detail film');
+    toast.error('Gagal mengambil detail film');
     return;
   }
-  console.log("Data yang dikirim:", { 
-    judul: film.title,
-    tahun: film.release_date?.split("-")[0] || "2023",
-    poster: film.poster_path 
-  });
+
   try {
-    await axios.post('http://localhost:6543/api/films', {
+    // Tambahkan film ke koleksi
+    const filmResponse = await axios.post('http://localhost:6543/api/films', {
       judul: filmDetail.Title,
       tahun: parseInt(filmDetail.Year) || null,
       sutradara: filmDetail.Director || '',
@@ -80,21 +76,21 @@ const handleAddToCollection = async (film) => {
       poster: filmDetail.Poster || '',
       sinopsis: filmDetail.Plot || '',
     }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` }
     });
 
-    toast.success(`"${film.Title}" berhasil ditambahkan ke koleksi!`);
+    // Set status "Ingin Ditonton" secara otomatis
+    await axios.post('http://localhost:6543/api/statuses', {
+      status: 'Ingin Ditonton',
+      film_id: filmResponse.data.id
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    toast.success(`"${filmDetail.Title}" berhasil ditambahkan ke koleksi dengan status Ingin Ditonton!`);
   } catch (error) {
     console.error(error);
-
-    // Jika respons error dari server
-    if (error.response && error.response.data && error.response.data.message) {
-      toast.error(`Gagal menambahkan: ${error.response.data.message}`);
-    } else {
-      toast.error('Gagal menambahkan film.');
-    }
+    toast.error(error.response?.data?.error || 'Gagal menambahkan film.');
   }
 };
 
@@ -144,7 +140,8 @@ const handleAddToCollection = async (film) => {
           {recommended.slice(0, 8).map((film) => (
             <div
               key={film.imdbID}
-              className="bg-[#1a1a1a] rounded p-2 shadow hover:shadow-lg relative"
+              onClick={() => navigate(`/films/${film.imdbID}`)}
+             className="bg-[#1a1a1a] rounded p-2 shadow hover:shadow-lg relative cursor-pointer"
             >
               {/* Tombol tambah koleksi di pojok kanan atas poster */}
               <button

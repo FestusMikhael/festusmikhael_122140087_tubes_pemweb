@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Collection from './pages/Collection';
+import FilmDetail from './pages/FilmDetail';
 
 const App = () => (
   <Router>
@@ -15,6 +16,7 @@ const App = () => (
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/koleksi" element={<Collection />} />
+        <Route path="/films/:id" element={<FilmDetail />} />
       </Routes>
       <ToastContainer />
     </div>

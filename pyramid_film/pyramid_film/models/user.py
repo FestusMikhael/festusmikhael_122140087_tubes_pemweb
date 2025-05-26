@@ -14,7 +14,8 @@ class User(Base):
 
     films = relationship("Film", back_populates="user", cascade="all, delete-orphan")
     reviews = relationship("Review", back_populates="user", cascade="all, delete-orphan")
-    
+    statuses = relationship("Status", back_populates="user", cascade="all, delete-orphan")
+
     def set_password(self, password):
         self.password_hash = bcrypt.hash(password)
 

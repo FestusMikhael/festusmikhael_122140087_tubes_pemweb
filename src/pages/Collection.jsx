@@ -8,8 +8,9 @@ const Collection = () => {
   const [editingReview, setEditingReview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [statuses, setStatuses] = useState({});
 
-  // Ambil data film dan review
+  // Ambil data film, status, dan review
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -30,6 +31,22 @@ const Collection = () => {
       const filmsData = filmsRes.data?.films || filmsRes.data || [];
       setFilms(filmsData);
 
+      // Ambil status untuk setiap film
+      const statusesMap = {};
+      await Promise.all(filmsData.map(async (film) => {
+        try {
+          const statusRes = await axios.get(`http://localhost:6543/api/statuses?film_id=${film.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (statusRes.data.statuses.length > 0) {
+            statusesMap[film.id] = statusRes.data.statuses[0];
+          }
+        } catch (err) {
+          console.error(`Gagal mengambil status untuk film ${film.id}:`, err);
+        }
+      }));
+      setStatuses(statusesMap);
+
       // Ambil review untuk setiap film
       const reviewsMap = {};
       await Promise.all(filmsData.map(async (film) => {
@@ -39,14 +56,13 @@ const Collection = () => {
           });
           reviewsMap[film.id] = reviewRes.data.review;
         } catch (err) {
-          // Jika tidak ada review, tidak perlu ditangani sebagai error
           if (err.response?.status !== 404) {
             console.error(`Gagal mengambil review untuk film ${film.id}:`, err);
           }
         }
       }));
-      
       setReviews(reviewsMap);
+
     } catch (err) {
       console.error('Gagal mengambil data:', err);
       setError('Gagal memuat koleksi film dan review.');
@@ -59,75 +75,56 @@ const Collection = () => {
     fetchData();
   }, []);
 
-    // Fungsi hapus film dan refresh list
-const handleDelete = async (id, judul) => {
-  const confirmed = window.confirm(`Yakin hapus film "${judul}" dari koleksi?`);
-  if (!confirmed) return;
+  const handleDelete = async (id, judul) => {
+    const confirmed = window.confirm(`Yakin hapus film "${judul}" dari koleksi?`);
+    if (!confirmed) return;
 
-  const token = localStorage.getItem('token');
-  console.log('Current token:', token);
-  if (!token) {
-    toast.error('Token tidak ditemukan, silakan login ulang.');
-    return;
-  }
-
-  try {
-    const response = await axios.delete(`http://localhost:6543/api/films/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    
-    if (response.data && response.data.message) {
-      toast.success(response.data.message);
-    } else {
-      toast.success(`Film "${judul}" berhasil dihapus.`);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token tidak ditemukan, silakan login ulang.');
+      return;
     }
-    
-    fetchData(); // Refresh list
-  } catch (err) {
-    console.error('Gagal menghapus film:', err);
-    toast.error(err.response?.data?.error || 'Gagal menghapus film.');
-  }
-};
 
-  // Handle submit review
+    try {
+      const response = await axios.delete(`http://localhost:6543/api/films/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      toast.success(response.data?.message || `Film "${judul}" berhasil dihapus.`);
+      fetchData();
+    } catch (err) {
+      console.error('Gagal menghapus film:', err);
+      toast.error(err.response?.data?.error || 'Gagal menghapus film.');
+    }
+  };
+
   const handleReviewSubmit = async (filmId, reviewData) => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    toast.error('Token tidak ditemukan, silakan login ulang.');
-    return;
-  }
-
-  try {
-    const url = `http://localhost:6543/api/films/${filmId}/my-review`;
-    
-    // Use PUT if review exists, POST if new
-    const method = reviews[filmId] ? 'PUT' : 'POST';
-    
-    const res = await axios({
-      method,
-      url,
-      data: reviewData,
-      headers: { 
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-    });
-
-    setReviews(prev => ({ ...prev, [filmId]: res.data.review || res.data }));
-    setEditingReview(null);
-    toast.success(reviews[filmId] ? 'Review berhasil diperbarui!' : 'Review berhasil ditambahkan!');
-  } catch (err) {
-    console.error('Gagal menyimpan review:', err);
-    if (err.response) {
-      console.error('Response error:', err.response.data);
-      toast.error(err.response.data.error || 'Gagal menyimpan review.');
-    } else {
-      toast.error('Gagal menyimpan review. Silakan coba lagi.');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token tidak ditemukan, silakan login ulang.');
+      return;
     }
-  }
-};
 
-  // Handle delete review
+    try {
+      const url = `http://localhost:6543/api/films/${filmId}/my-review`;
+      const method = reviews[filmId] ? 'PUT' : 'POST';
+
+      const res = await axios({
+        method,
+        url,
+        data: reviewData,
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      });
+
+      setReviews(prev => ({ ...prev, [filmId]: res.data.review || res.data }));
+      setEditingReview(null);
+      toast.success(reviews[filmId] ? 'Review berhasil diperbarui!' : 'Review berhasil ditambahkan!');
+    } catch (err) {
+      console.error('Gagal menyimpan review:', err);
+      toast.error(err.response?.data?.error || 'Gagal menyimpan review.');
+    }
+  };
+
   const handleDeleteReview = async (reviewId, filmId) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -145,7 +142,7 @@ const handleDelete = async (id, judul) => {
         delete newReviews[filmId];
         return newReviews;
       });
-      
+
       toast.success('Review berhasil dihapus!');
     } catch (err) {
       console.error('Gagal menghapus review:', err);
@@ -153,7 +150,37 @@ const handleDelete = async (id, judul) => {
     }
   };
 
-  // Render rating stars
+  const handleUpdateStatus = async (filmId, newStatus) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token tidak ditemukan, silakan login ulang.');
+      return;
+    }
+
+    try {
+      if (statuses[filmId]) {
+        await axios.put(`http://localhost:6543/api/statuses/${statuses[filmId].id}`, {
+          status: newStatus,
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        await axios.post(`http://localhost:6543/api/statuses`, {
+          film_id: filmId,
+          status: newStatus,
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+
+      toast.success(`Status berhasil diubah menjadi "${newStatus}"`);
+      fetchData();
+    } catch (err) {
+      console.error('Gagal memperbarui status:', err);
+      toast.error('Gagal memperbarui status film.');
+    }
+  };
+
   const renderStars = (rating) => {
     return [...Array(5)].map((_, i) => (
       <span key={i} className={i < rating ? 'text-yellow-400' : 'text-gray-400'}>
@@ -168,22 +195,16 @@ const handleDelete = async (id, judul) => {
 
       {loading && <p className="text-gray-400">Memuat koleksi...</p>}
       {error && <p className="text-red-500">{error}</p>}
-
       {!loading && films.length === 0 && !error && (
         <p className="text-gray-400">Belum ada film di koleksi.</p>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {films.map((film) =>(
+        {films.map((film) => (
           <div key={film.id} className="flex flex-col md:flex-row gap-6 bg-[#1a1a1a] rounded-lg p-4">
-            {/* Film Section */}
             <div className="flex-shrink-0 w-full md:w-1/3">
               {film.poster ? (
-                <img
-                  src={film.poster}
-                  alt={film.judul}
-                  className="w-full h-64 object-cover rounded"
-                />
+                <img src={film.poster} alt={film.judul} className="w-full h-64 object-cover rounded" />
               ) : (
                 <div className="w-full h-64 bg-yellow-400 flex items-center justify-center text-black font-bold">
                   No Cover
@@ -199,34 +220,32 @@ const handleDelete = async (id, judul) => {
               >
                 Hapus Film
               </button>
+
+              {/* Dropdown Status */}
+              <div className="mt-3">
+                <label className="text-xs text-gray-300">Status:</label>
+                <select
+                  value={statuses[film.id]?.status || ''}
+                  onChange={(e) => handleUpdateStatus(film.id, e.target.value)}
+                  className="bg-[#2a2a2a] text-white rounded px-2 py-1 text-sm w-full mt-1"
+                >
+                  <option value="">Pilih status</option>
+                  <option value="ingin ditonton">Ingin Ditonton</option>
+                  <option value="sudah ditonton">Sudah Ditonton</option>
+                </select>
+              </div>
             </div>
 
-            {/* Review Section */}
             <div className="flex-grow">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-yellow-400">Review Saya</h3>
                 {reviews[film.id] ? (
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => setEditingReview(film.id)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-1 text-sm"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteReview(reviews[film.id].id, film.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white rounded px-3 py-1 text-sm"
-                    >
-                      Hapus
-                    </button>
+                    <button onClick={() => setEditingReview(film.id)} className="bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-1 text-sm">Edit</button>
+                    <button onClick={() => handleDeleteReview(reviews[film.id].id, film.id)} className="bg-red-600 hover:bg-red-700 text-white rounded px-3 py-1 text-sm">Hapus</button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => setEditingReview(film.id)}
-                    className="bg-green-600 hover:bg-green-700 text-white rounded px-3 py-1 text-sm"
-                  >
-                    Tambah Review
-                  </button>
+                  <button onClick={() => setEditingReview(film.id)} className="bg-green-600 hover:bg-green-700 text-white rounded px-3 py-1 text-sm">Tambah Review</button>
                 )}
               </div>
 
@@ -242,12 +261,7 @@ const handleDelete = async (id, judul) => {
                   }}>
                     <div className="mb-4">
                       <label className="block text-sm font-medium mb-1">Rating</label>
-                      <select
-                        name="rating"
-                        defaultValue={reviews[film.id]?.rating || 5}
-                        className="bg-[#1a1a1a] text-white rounded px-3 py-2 w-full"
-                        required
-                      >
+                      <select name="rating" defaultValue={reviews[film.id]?.rating || 5} className="bg-[#1a1a1a] text-white rounded px-3 py-2 w-full" required>
                         {[1, 2, 3, 4, 5].map(num => (
                           <option key={num} value={num}>{num} Bintang</option>
                         ))}
@@ -255,27 +269,11 @@ const handleDelete = async (id, judul) => {
                     </div>
                     <div className="mb-4">
                       <label className="block text-sm font-medium mb-1">Komentar</label>
-                      <textarea
-                        name="komentar"
-                        defaultValue={reviews[film.id]?.komentar || ''}
-                        className="bg-[#1a1a1a] text-white rounded px-3 py-2 w-full"
-                        rows="3"
-                      />
+                      <textarea name="komentar" defaultValue={reviews[film.id]?.komentar || ''} className="bg-[#1a1a1a] text-white rounded px-3 py-2 w-full" rows="3" />
                     </div>
                     <div className="flex gap-2">
-                      <button
-                        type="submit"
-                        className="bg-yellow-600 hover:bg-yellow-700 text-white rounded px-4 py-2"
-                      >
-                        Simpan
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditingReview(null)}
-                        className="bg-gray-600 hover:bg-gray-700 text-white rounded px-4 py-2"
-                      >
-                        Batal
-                      </button>
+                      <button type="submit" className="bg-yellow-600 hover:bg-yellow-700 text-white rounded px-4 py-2">Simpan</button>
+                      <button type="button" onClick={() => setEditingReview(null)} className="bg-gray-600 hover:bg-gray-700 text-white rounded px-4 py-2">Batal</button>
                     </div>
                   </form>
                 </div>

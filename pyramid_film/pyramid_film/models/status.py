@@ -1,18 +1,26 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from .meta import Base
 
 class Status(Base):
     __tablename__ = 'statuses'
     id = Column(Integer, primary_key=True)
-    nama = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    film_id = Column(Integer, ForeignKey('films.id'), nullable=False)
 
     # Relationship
-    films = relationship("Film", back_populates="status")
+    user = relationship("User", back_populates="statuses")
+    film = relationship("Film", back_populates="statuses")
 
-    # Method to_dict untuk API Response
+    __table_args__ = (
+        UniqueConstraint('user_id', 'film_id', name='user_film_unique'),
+    )
+
     def to_dict(self):
         return {
             'id': self.id,
-            'nama': self.nama
+            'status': self.status,
+            'user_id': self.user_id,
+            'film_id': self.film_id,
         }
