@@ -94,6 +94,11 @@ const handleAddToCollection = async (film) => {
   }
 };
 
+  const handleLogout = () => {
+  localStorage.removeItem('token'); // Hapus token dari localStorage
+  toast.success('Logout berhasil!');
+  navigate('/login'); // Arahkan ke halaman login
+};
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white flex flex-col">
@@ -115,7 +120,7 @@ const handleAddToCollection = async (film) => {
                 <li
                   key={film.imdbID}
                   className="flex items-center gap-2 p-2 border-b border-gray-700 hover:bg-[#2a2a2a] cursor-pointer"
-                  onClick={() => navigate(`/film/${film.imdbID}`)}
+                  onClick={() => navigate(`/films/${film.imdbID}`)}
                 >
                   {film.Poster !== 'N/A' ? (
                     <img src={film.Poster} alt={film.Title} className="w-10 h-auto rounded" />
@@ -145,7 +150,10 @@ const handleAddToCollection = async (film) => {
             >
               {/* Tombol tambah koleksi di pojok kanan atas poster */}
               <button
-                onClick={() => handleAddToCollection(film)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Mencegah klik bubble ke parent
+                  handleAddToCollection(film);
+                }}
                 className="absolute top-2 right-2 bg-yellow-400 hover:bg-yellow-300 text-black rounded-full w-7 h-7 flex items-center justify-center font-bold text-lg shadow-md"
                 title="Tambah ke Koleksi"
               >
@@ -170,12 +178,20 @@ const handleAddToCollection = async (film) => {
 
       {/* Footer dengan tombol ke halaman koleksi */}
       <footer className="w-full p-6 bg-[#1a1a1a] text-center">
-        <button
-          onClick={() => navigate('/koleksi')}
-          className="bg-yellow-400 text-black px-6 py-2 rounded font-semibold hover:bg-yellow-300"
-        >
-          Kelola Koleksi Saya
-        </button>
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <button
+            onClick={() => handleLogout()}
+            className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded font-semibold"
+          >
+            Logout
+          </button>
+          <button
+            onClick={() => navigate('/koleksi')}
+            className="bg-yellow-400 hover:bg-yellow-300 text-black px-6 py-2 rounded font-semibold"
+          >
+            Kelola Koleksi Saya
+          </button>
+        </div>
       </footer>
     </div>
   );
